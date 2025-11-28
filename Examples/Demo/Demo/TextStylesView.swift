@@ -62,6 +62,24 @@ struct TextStylesView: View {
         ForegroundColor(.mint)
         UnderlineStyle(.init(pattern: .dot))
       }
+
+        Section("Destination-Based Link Style") {
+          Markdown("""
+            Check out [GitHub](https://github.com) or read our [Apple](https://apple.com).
+            """)
+        }
+        .markdownTheme(
+          Theme()
+            .customLink { destination in
+              if destination.contains("apple") {
+                ForegroundColor(.purple)
+                UnderlineStyle(.init(pattern: .dot))
+              } else {
+                ForegroundColor(.blue)
+                UnderlineStyle(.single)
+              }
+            }
+        )
     }
   }
 }

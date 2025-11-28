@@ -141,8 +141,11 @@ private struct AttributedStringInlineRenderer {
 
   private mutating func renderLink(destination: String, children: [InlineNode]) {
     let savedAttributes = self.attributes
-    
-    self.attributes = self.textStyles.link(destination).mergingAttributes(self.attributes)
+
+    // Apply base link style, then custom link style on top
+    self.attributes = self.textStyles.link.mergingAttributes(self.attributes)
+    self.attributes = self.textStyles.customLink(destination).mergingAttributes(self.attributes)
+
     self.attributes.link = URL(string: destination, relativeTo: self.baseURL)
 
     for child in children {

@@ -18,27 +18,15 @@ extension View {
     self.environment((\EnvironmentValues.theme).appending(path: keyPath), textStyle())
   }
 
-  /// Replaces the link text style of the current ``Theme`` with the given text style.
-  /// - Parameters:
-  ///   - keyPath: The ``Theme`` key path to the link style (use `\.link`).
-  ///   - textStyle: A text style builder that returns the new link style.
-  public func markdownTextStyle<S: TextStyle>(
-    _ keyPath: WritableKeyPath<Theme, (String?) -> TextStyle>,
-    @TextStyleBuilder textStyle: () -> S
+  /// Adds a destination-based link style to the current ``Theme``.
+  ///
+  /// This style is applied after the base `\.link` style, allowing destination-specific customization.
+  ///
+  /// - Parameter customLink: A text style builder that receives the link destination and returns the link style.
+  public func markdownCustomLink(
+    @TextStyleBuilder customLink: @escaping (_ destination: String) -> TextStyle
   ) -> some View {
-    let style = textStyle()
-    return self.environment((\EnvironmentValues.theme).appending(path: keyPath), { _ in style })
-  }
-
-  /// Replaces the link text style of the current ``Theme`` with a destination-based style.
-  /// - Parameters:
-  ///   - keyPath: The ``Theme`` key path to the link style (use `\.link`).
-  ///   - textStyle: A text style builder that receives the link destination and returns the link style.
-  public func markdownTextStyle(
-    _ keyPath: WritableKeyPath<Theme, (String?) -> TextStyle>,
-    @TextStyleBuilder textStyle: @escaping (_ destination: String?) -> TextStyle
-  ) -> some View {
-    self.environment((\EnvironmentValues.theme).appending(path: keyPath), textStyle)
+    self.environment(\.theme.customLink, customLink)
   }
 
   /// Replaces a specific block style on the current ``Theme`` with a block style initialized with the given body closure.

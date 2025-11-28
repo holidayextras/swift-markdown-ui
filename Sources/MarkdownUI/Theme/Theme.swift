@@ -116,10 +116,11 @@ public struct Theme: Sendable {
   public var strikethrough: TextStyle = StrikethroughStyle(.single)
 
   /// The link style.
-  ///
-  /// This closure receives the link destination and returns a text style.
-  /// Use this to apply different styles based on the link URL.
-  public var link: (String?) -> TextStyle = { _ in EmptyTextStyle() }
+  public var link: TextStyle = EmptyTextStyle()
+
+  /// A closure that returns a link style based on the link destination.
+  /// This style is applied after the base ``link`` style, allowing destination-specific customization.
+  public var customLink: (String) -> TextStyle = { _ in EmptyTextStyle() }
 
   var headings = Array(
     repeating: BlockStyle<BlockConfiguration> { $0.label },
@@ -247,18 +248,18 @@ extension Theme {
   /// - Parameter link: A text style builder that returns the link style.
   public func link<S: TextStyle>(@TextStyleBuilder link: () -> S) -> Theme {
     var theme = self
-    let style = link()
-    theme.link = { _ in style }
+    theme.link = link()
     return theme
   }
-  
+
   /// Adds a destination-based link style to the theme.
   ///
-  /// Use this method to access the link's destination URL and apply conditional text styling:
+  /// Use this method to access the link's destination URL and apply conditional text styling.
+  /// When set, this takes precedence over the simple ``link`` text style.
   ///
   /// ```swift
   /// let myTheme = Theme()
-  ///   .link { destination in
+  ///   .customLink { destination in
   ///     if let url = destination, url.hasPrefix("external:") {
   ///       UnderlineStyle(.single)
   ///       ForegroundColor(.blue)
@@ -269,10 +270,10 @@ extension Theme {
   ///   }
   /// ```
   ///
-  /// - Parameter link: A text style builder that receives the link destination and returns the link style.
-  public func link(@TextStyleBuilder link: @escaping (_ destination: String?) -> TextStyle) -> Theme {
+  /// - Parameter customLink: A text style builder that receives the link destination and returns the link style.
+  public func customLink(@TextStyleBuilder customLink: @escaping (_ destination: String) -> TextStyle) -> Theme {
     var theme = self
-    theme.link = link
+    theme.customLink = customLink
     return theme
   }
 }
