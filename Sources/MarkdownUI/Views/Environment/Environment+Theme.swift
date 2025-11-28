@@ -18,6 +18,29 @@ extension View {
     self.environment((\EnvironmentValues.theme).appending(path: keyPath), textStyle())
   }
 
+  /// Replaces the link text style of the current ``Theme`` with the given text style.
+  /// - Parameters:
+  ///   - keyPath: The ``Theme`` key path to the link style (use `\.link`).
+  ///   - textStyle: A text style builder that returns the new link style.
+  public func markdownTextStyle<S: TextStyle>(
+    _ keyPath: WritableKeyPath<Theme, (String?) -> TextStyle>,
+    @TextStyleBuilder textStyle: () -> S
+  ) -> some View {
+    let style = textStyle()
+    return self.environment((\EnvironmentValues.theme).appending(path: keyPath), { _ in style })
+  }
+
+  /// Replaces the link text style of the current ``Theme`` with a destination-based style.
+  /// - Parameters:
+  ///   - keyPath: The ``Theme`` key path to the link style (use `\.link`).
+  ///   - textStyle: A text style builder that receives the link destination and returns the link style.
+  public func markdownTextStyle(
+    _ keyPath: WritableKeyPath<Theme, (String?) -> TextStyle>,
+    @TextStyleBuilder textStyle: @escaping (_ destination: String?) -> TextStyle
+  ) -> some View {
+    self.environment((\EnvironmentValues.theme).appending(path: keyPath), textStyle)
+  }
+
   /// Replaces a specific block style on the current ``Theme`` with a block style initialized with the given body closure.
   /// - Parameters:
   ///   - keyPath: The ``Theme`` key path to the block style to replace.

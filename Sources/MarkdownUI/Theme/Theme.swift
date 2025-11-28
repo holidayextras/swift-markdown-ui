@@ -116,11 +116,10 @@ public struct Theme: Sendable {
   public var strikethrough: TextStyle = StrikethroughStyle(.single)
 
   /// The link style.
-  public var link: TextStyle = EmptyTextStyle()
-  
-  /// Optional closure that returns a link style based on the link configuration.
-  /// When set, this takes precedence over the simple ``link`` text style.
-  var linkStyle: ((LinkConfiguration) -> TextStyle)? = nil
+  ///
+  /// This closure receives the link destination and returns a text style.
+  /// Use this to apply different styles based on the link URL.
+  public var link: (String?) -> TextStyle = { _ in EmptyTextStyle() }
 
   var headings = Array(
     repeating: BlockStyle<BlockConfiguration> { $0.label },
@@ -248,18 +247,19 @@ extension Theme {
   /// - Parameter link: A text style builder that returns the link style.
   public func link<S: TextStyle>(@TextStyleBuilder link: () -> S) -> Theme {
     var theme = self
-    theme.link = link()
+    let style = link()
+    theme.link = { _ in style }
     return theme
   }
   
-  /// Adds a configuration-based link style to the theme.
+  /// Adds a destination-based link style to the theme.
   ///
   /// Use this method to access the link's destination URL and apply conditional text styling:
   ///
   /// ```swift
   /// let myTheme = Theme()
-  ///   .link { configuration in
-  ///     if let url = configuration.destination, url.hasPrefix("external:") {
+  ///   .link { destination in
+  ///     if let url = destination, url.hasPrefix("external:") {
   ///       UnderlineStyle(.single)
   ///       ForegroundColor(.blue)
   ///     } else {
@@ -269,10 +269,10 @@ extension Theme {
   ///   }
   /// ```
   ///
-  /// - Parameter link: A text style builder that receives the link configuration and returns the link style.
-  public func link(@TextStyleBuilder link: @escaping (LinkConfiguration) -> TextStyle) -> Theme {
+  /// - Parameter link: A text style builder that receives the link destination and returns the link style.
+  public func link(@TextStyleBuilder link: @escaping (_ destination: String?) -> TextStyle) -> Theme {
     var theme = self
-    theme.linkStyle = link
+    theme.link = link
     return theme
   }
 }

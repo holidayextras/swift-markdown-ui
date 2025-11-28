@@ -5,6 +5,5 @@ struct InlineTextStyles {
   let emphasis: TextStyle
   let strong: TextStyle
   let strikethrough: TextStyle
-  let link: TextStyle
-  let linkStyle: ((LinkConfiguration) -> TextStyle)?
+  let link: (String?) -> TextStyle
 }
