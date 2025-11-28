@@ -118,9 +118,9 @@ public struct Theme: Sendable {
   /// The link style.
   public var link: TextStyle = EmptyTextStyle()
 
-  /// A closure that returns a link style based on the link destination.
+  /// A closure that returns a link style based on the link destination URL.
   /// This style is applied after the base ``link`` style, allowing destination-specific customization.
-  public var customLink: (String) -> TextStyle = { _ in EmptyTextStyle() }
+  public var customLink: (URL) -> TextStyle = { _ in EmptyTextStyle() }
 
   var headings = Array(
     repeating: BlockStyle<BlockConfiguration> { $0.label },
@@ -270,8 +270,8 @@ extension Theme {
   ///   }
   /// ```
   ///
-  /// - Parameter customLink: A text style builder that receives the link destination and returns the link style.
-  public func customLink(@TextStyleBuilder customLink: @escaping (_ destination: String) -> TextStyle) -> Theme {
+  /// - Parameter customLink: A text style builder that receives the link destination URL and returns the link style.
+  public func customLink(@TextStyleBuilder customLink: @escaping (_ destination: URL) -> TextStyle) -> Theme {
     var theme = self
     theme.customLink = customLink
     return theme

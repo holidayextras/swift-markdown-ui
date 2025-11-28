@@ -6,5 +6,5 @@ struct InlineTextStyles {
   let strong: TextStyle
   let strikethrough: TextStyle
   let link: TextStyle
-  let customLink: (String) -> TextStyle
+  let customLink: (URL) -> TextStyle
 }

@@ -65,13 +65,20 @@ struct TextStylesView: View {
 
         Section("Destination-Based Link Style") {
           Markdown("""
-            Check out [GitHub](https://github.com) or read our [Apple](https://apple.com).
+            Check out [GitHub](https://github.com) or run [this prompt](prompt:/ThisIsAPrompt).
             """)
         }
+        .environment(\.openURL, OpenURLAction { url in
+          if url.scheme == "prompt" {
+            print("Prompt URL tapped: \(url)")
+            return .handled
+          }
+          return .systemAction
+        })
         .markdownTheme(
           Theme()
-            .customLink { destination in
-              if destination.contains("apple") {
+            .customLink { url in
+              if url.scheme == "prompt" {
                 ForegroundColor(.purple)
                 UnderlineStyle(.init(pattern: .dot))
               } else {

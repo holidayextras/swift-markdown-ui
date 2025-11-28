@@ -22,9 +22,9 @@ extension View {
   ///
   /// This style is applied after the base `\.link` style, allowing destination-specific customization.
   ///
-  /// - Parameter customLink: A text style builder that receives the link destination and returns the link style.
+  /// - Parameter customLink: A text style builder that receives the link destination URL and returns the link style.
   public func markdownCustomLink(
-    @TextStyleBuilder customLink: @escaping (_ destination: String) -> TextStyle
+    @TextStyleBuilder customLink: @escaping (_ destination: URL) -> TextStyle
   ) -> some View {
     self.environment(\.theme.customLink, customLink)
   }
