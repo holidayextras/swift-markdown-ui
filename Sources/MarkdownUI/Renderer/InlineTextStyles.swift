@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 struct InlineTextStyles {
   let code: TextStyle
@@ -6,5 +6,5 @@ struct InlineTextStyles {
   let strong: TextStyle
   let strikethrough: TextStyle
   let link: TextStyle
-  let customLink: (String) -> TextStyle
+  let customLink: ((LinkConfiguration) -> Text)?
 }

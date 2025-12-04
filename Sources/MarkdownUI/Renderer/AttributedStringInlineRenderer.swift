@@ -18,6 +18,26 @@ extension InlineNode {
   }
 }
 
+extension Sequence where Element == InlineNode {
+  func renderAttributedString(
+    baseURL: URL?,
+    textStyles: InlineTextStyles,
+    softBreakMode: SoftBreak.Mode,
+    attributes: AttributeContainer
+  ) -> AttributedString {
+    var renderer = AttributedStringInlineRenderer(
+      baseURL: baseURL,
+      textStyles: textStyles,
+      softBreakMode: softBreakMode,
+      attributes: attributes
+    )
+    for inline in self {
+      renderer.render(inline)
+    }
+    return renderer.result.resolvingFonts()
+  }
+}
+
 private struct AttributedStringInlineRenderer {
   var result = AttributedString()
 
@@ -142,10 +162,8 @@ private struct AttributedStringInlineRenderer {
   private mutating func renderLink(destination: String, children: [InlineNode]) {
     let savedAttributes = self.attributes
 
-    // Apply base link style, then custom link style on top
+    // Apply base link style
     self.attributes = self.textStyles.link.mergingAttributes(self.attributes)
-    self.attributes = self.textStyles.customLink(destination).mergingAttributes(self.attributes)
-
     self.attributes.link = URL(string: destination, relativeTo: self.baseURL)
 
     for child in children {
