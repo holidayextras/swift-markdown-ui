@@ -20,11 +20,21 @@ extension View {
 
   /// Adds a destination-based link style to the current ``Theme``.
   ///
-  /// This style is applied after the base `\.link` style, allowing destination-specific customization.
+  /// This style is applied after the base `\.link` style, allowing full customization of link appearance.
+  /// The configuration provides the default label, destination URL, and plain text content.
   ///
-  /// - Parameter customLink: A text style builder that receives the link destination URL and returns the link style.
+  /// ```swift
+  /// Markdown("Check out [this link](https://example.com)")
+  ///   .markdownCustomLink { configuration in
+  ///     configuration.label
+  ///       .foregroundStyle(LinearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
+  ///     + Text(" ") + Text(Image(systemName: "arrow.up.right")).foregroundColor(.purple)
+  ///   }
+  /// ```
+  ///
+  /// - Parameter customLink: A closure that receives the link configuration and returns a customized `Text`.
   public func markdownCustomLink(
-    @TextStyleBuilder customLink: @escaping (_ destination: URL) -> TextStyle
+    _ customLink: @escaping (_ configuration: LinkConfiguration) -> Text
   ) -> some View {
     self.environment(\.theme.customLink, customLink)
   }

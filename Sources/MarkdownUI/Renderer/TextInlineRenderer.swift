@@ -60,6 +60,8 @@ private struct TextInlineRenderer {
       self.renderHTML(content)
     case .image(let source, _):
       self.renderImage(source)
+    case .link(let destination, let children):
+      self.renderLink(destination: destination, children: children)
     default:
       self.defaultRender(inline)
     }
@@ -103,6 +105,43 @@ private struct TextInlineRenderer {
   private mutating func renderImage(_ source: String) {
     if let image = self.images[source] {
       self.result = self.result + Text(image)
+    }
+  }
+
+  private mutating func renderLink(destination: String, children: [InlineNode]) {
+    guard let url = URL(string: destination, relativeTo: self.baseURL) else {
+      // If URL is invalid, just render as plain text
+      for child in children {
+        self.render(child)
+      }
+      return
+    }
+
+    // Build the default label with base link styling applied
+    let linkNode = InlineNode.link(destination: destination, children: children)
+    let defaultLabel = Text(
+      linkNode.renderAttributedString(
+        baseURL: self.baseURL,
+        textStyles: self.textStyles,
+        softBreakMode: self.softBreakMode,
+        attributes: self.attributes
+      )
+    )
+
+    // Get plain text content
+    let plainText = children.renderPlainText()
+
+    // If customLink is set, use it with the configuration
+    if let customLink = self.textStyles.customLink {
+      let configuration = LinkConfiguration(
+        label: defaultLabel,
+        destination: url,
+        text: plainText
+      )
+      self.result = self.result + customLink(configuration)
+    } else {
+      // Use the default label
+      self.result = self.result + defaultLabel
     }
   }
 

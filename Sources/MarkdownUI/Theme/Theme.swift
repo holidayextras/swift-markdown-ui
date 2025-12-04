@@ -118,9 +118,10 @@ public struct Theme: Sendable {
   /// The link style.
   public var link: TextStyle = EmptyTextStyle()
 
-  /// A closure that returns a link style based on the link destination URL.
-  /// This style is applied after the base ``link`` style, allowing destination-specific customization.
-  public var customLink: (URL) -> TextStyle = { _ in EmptyTextStyle() }
+  /// A closure that receives a link configuration and returns a fully customized Text.
+  /// When set, this gives full control over link rendering, including gradients, icons, and custom styling.
+  /// When `nil`, the base ``link`` style is used.
+  public var customLink: ((LinkConfiguration) -> Text)? = nil
 
   var headings = Array(
     repeating: BlockStyle<BlockConfiguration> { $0.label },
@@ -252,26 +253,37 @@ extension Theme {
     return theme
   }
 
-  /// Adds a destination-based link style to the theme.
+  /// Adds a destination-based link style to the theme with full customization.
   ///
-  /// Use this method to access the link's destination URL and apply conditional text styling.
-  /// When set, this takes precedence over the simple ``link`` text style.
+  /// Use this method to access the link's configuration and return a fully customized `Text`.
+  /// This gives you complete control over link appearance, including gradients, trailing icons,
+  /// and any other Text modifiers.
   ///
   /// ```swift
-  /// let myTheme = Theme()
-  ///   .customLink { destination in
-  ///     if let url = destination, url.hasPrefix("external:") {
-  ///       UnderlineStyle(.single)
-  ///       ForegroundColor(.blue)
-  ///     } else {
-  ///       UnderlineStyle(.dot)
-  ///       ForegroundColor(.purple)
-  ///     }
+  /// let theme = Theme()
+  ///   .customLink { configuration in
+  ///     // Apply gradient to the link text
+  ///     configuration.label
+  ///       .foregroundStyle(
+  ///         LinearGradient(
+  ///           colors: [.blue, .purple, .pink],
+  ///           startPoint: .leading,
+  ///           endPoint: .trailing
+  ///         )
+  ///       )
+  ///     // Add a trailing icon
+  ///     + Text(" ") + Text(Image(systemName: "arrow.up.right"))
+  ///         .foregroundColor(.pink)
   ///   }
   /// ```
   ///
-  /// - Parameter customLink: A text style builder that receives the link destination URL and returns the link style.
-  public func customLink(@TextStyleBuilder customLink: @escaping (_ destination: URL) -> TextStyle) -> Theme {
+  /// The configuration provides:
+  /// - `label`: The default rendered link text with base styling applied
+  /// - `destination`: The link's URL
+  /// - `text`: The plain text content of the link
+  ///
+  /// - Parameter customLink: A closure that receives the link configuration and returns a customized `Text`.
+  public func customLink(_ customLink: @escaping (_ configuration: LinkConfiguration) -> Text) -> Theme {
     var theme = self
     theme.customLink = customLink
     return theme

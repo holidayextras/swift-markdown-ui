@@ -146,9 +146,8 @@ private struct AttributedStringInlineRenderer {
     // Apply base link style
     self.attributes = self.textStyles.link.mergingAttributes(self.attributes)
 
-    // Apply custom link style if URL is valid
+    // Set link URL if valid
     if let url {
-      self.attributes = self.textStyles.customLink(url).mergingAttributes(self.attributes)
       self.attributes.link = url
     }
 

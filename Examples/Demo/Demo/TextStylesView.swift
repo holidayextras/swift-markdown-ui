@@ -37,6 +37,18 @@ struct TextStylesView: View {
     Use `git status` to list all new or modified files that haven't yet been committed.
     """
 
+    func makeGradientText(_ text: String, colors: [Color]) -> Text {
+        
+        let characters = Array(text)
+        let maxIndex = max(characters.count - 1, 1)
+        
+        return characters.indices.reduce(Text("")) { partial, index in
+            let progress = Double(index) / Double(maxIndex)
+            let color = Color.gradientColor(from: colors, at: progress)
+            return partial + Text(String(characters[index])).foregroundColor(color)
+        }
+    }
+    
   var body: some View {
     DemoView {
       Markdown(self.content)
@@ -62,31 +74,6 @@ struct TextStylesView: View {
         ForegroundColor(.mint)
         UnderlineStyle(.init(pattern: .dot))
       }
-
-        Section("Destination-Based Link Style") {
-          Markdown("""
-            Check out [GitHub](https://github.com) or run [this prompt](prompt:/ThisIsAPrompt).
-            """)
-        }
-        .environment(\.openURL, OpenURLAction { url in
-          if url.scheme == "prompt" {
-            print("Prompt URL tapped: \(url)")
-            return .handled
-          }
-          return .systemAction
-        })
-        .markdownTheme(
-          Theme()
-            .customLink { url in
-              if url.scheme == "prompt" {
-                ForegroundColor(.purple)
-                UnderlineStyle(.init(pattern: .dot))
-              } else {
-                ForegroundColor(.blue)
-                UnderlineStyle(.single)
-              }
-            }
-        )
     }
   }
 }
