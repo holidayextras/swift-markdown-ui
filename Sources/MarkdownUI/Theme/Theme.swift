@@ -254,25 +254,29 @@ extension Theme {
 
   /// Adds a custom link renderer to the theme.
   ///
-  /// Use this method to fully customize how links are rendered, including gradient text effects.
+  /// Use this method to fully customize how links are rendered. The closure receives
+  /// a ``LinkConfiguration`` with the link's `destination` URL and `title` text.
   ///
   /// ```swift
   /// let myTheme = Theme()
   ///   .customLink { configuration in
-  ///     // Gradient link text
-  ///     configuration.gradientText(colors: [.blue, .purple], underlineStyle: .single)
+  ///     var attributedString = AttributedString(configuration.title)
+  ///     attributedString.link = configuration.destination
+  ///     attributedString.foregroundColor = .purple
+  ///     return Text(attributedString)
   ///   }
   /// ```
   ///
-  /// You can also add icons or conditionally style based on destination:
+  /// You can conditionally style based on destination:
   ///
   /// ```swift
   /// .customLink { configuration in
+  ///   var text = AttributedString(configuration.title)
+  ///   text.link = configuration.destination
   ///   if configuration.destination.host == "github.com" {
-  ///     configuration.label + Text(" ") + Text(Image(systemName: "link"))
-  ///   } else {
-  ///     configuration.gradientText(colors: [.orange, .red])
+  ///     text.foregroundColor = .purple
   ///   }
+  ///   return Text(text)
   /// }
   /// ```
   ///

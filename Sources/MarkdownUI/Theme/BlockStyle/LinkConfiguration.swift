@@ -9,15 +9,12 @@ import SwiftUI
 /// ```swift
 /// let theme = Theme()
 ///   .customLink { configuration in
-///     configuration.label
-///       + Text(" ")
-///       + Text(Image(systemName: "arrow.up.right")).foregroundColor(.purple)
+///     Text(configuration.title)
+///       .foregroundColor(.blue)
+///       .underline()
 ///   }
 /// ```
 public struct LinkConfiguration {
-  /// The default rendered link text with the base link style applied.
-  public let label: Text
-
   /// The link's destination URL.
   public let destination: URL
 

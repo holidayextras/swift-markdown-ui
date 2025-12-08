@@ -116,29 +116,7 @@ private struct TextInlineRenderer {
       return
     }
 
-    // Create attributes with link style and URL applied for the label
-    var linkAttributes = self.attributes
-    self.textStyles.link._collectAttributes(in: &linkAttributes)
-    linkAttributes.link = url
-
-    // Create the label by rendering children with link attributes
-    let labelAttributedString = children.renderAttributedString(
-      baseURL: self.baseURL,
-      textStyles: InlineTextStyles(
-        code: self.textStyles.code,
-        emphasis: self.textStyles.emphasis,
-        strong: self.textStyles.strong,
-        strikethrough: self.textStyles.strikethrough,
-        link: self.textStyles.link,
-        customLink: nil  // Don't recurse
-      ),
-      softBreakMode: self.softBreakMode,
-      attributes: linkAttributes
-    )
-    let label = Text(labelAttributedString)
-
     let configuration = LinkConfiguration(
-      label: label,
       destination: url,
       title: children.renderPlainText()
     )

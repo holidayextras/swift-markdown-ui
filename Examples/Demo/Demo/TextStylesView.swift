@@ -70,9 +70,13 @@ struct TextStylesView: View {
         }
         .markdownTheme(
           Theme()
-          .customLink { config in
-              config.label
-          }
+            .customLink { configuration in
+              var text = AttributedString(configuration.title)
+              text.link = configuration.destination
+              text.foregroundColor = .purple
+              text.underlineStyle = .single
+              return Text(text) + Text(" ") + Text(Image(systemName: "arrow.up.right")).foregroundColor(.purple)
+            }
         )
     }
   }
