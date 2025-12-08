@@ -60,6 +60,8 @@ private struct TextInlineRenderer {
       self.renderHTML(content)
     case .image(let source, _):
       self.renderImage(source)
+    case .link(let destination, let children):
+      self.renderLink(destination: destination, children: children)
     default:
       self.defaultRender(inline)
     }
@@ -104,6 +106,22 @@ private struct TextInlineRenderer {
     if let image = self.images[source] {
       self.result = self.result + Text(image)
     }
+  }
+
+  private mutating func renderLink(destination: String, children: [InlineNode]) {
+    guard let customLink = self.textStyles.customLink,
+          let url = URL(string: destination, relativeTo: self.baseURL) else {
+      // Fall back to default AttributedString rendering
+      self.defaultRender(.link(destination: destination, children: children))
+      return
+    }
+
+    let configuration = LinkConfiguration(
+      destination: url,
+      title: children.renderPlainText()
+    )
+
+    self.result = self.result + customLink(configuration)
   }
 
   private mutating func defaultRender(_ inline: InlineNode) {

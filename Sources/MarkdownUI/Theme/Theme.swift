@@ -118,9 +118,9 @@ public struct Theme: Sendable {
   /// The link style.
   public var link: TextStyle = EmptyTextStyle()
 
-  /// A closure that returns a link style based on the link destination.
-  /// This style is applied after the base ``link`` style, allowing destination-specific customization.
-  public var customLink: (String) -> TextStyle = { _ in EmptyTextStyle() }
+  /// A closure that returns a custom link view based on the link configuration.
+  /// When nil, the default link rendering is used.
+  public var customLink: ((LinkConfiguration) -> Text)? = nil
 
   var headings = Array(
     repeating: BlockStyle<BlockConfiguration> { $0.label },
@@ -252,26 +252,36 @@ extension Theme {
     return theme
   }
 
-  /// Adds a destination-based link style to the theme.
+  /// Adds a custom link renderer to the theme.
   ///
-  /// Use this method to access the link's destination URL and apply conditional text styling.
-  /// When set, this takes precedence over the simple ``link`` text style.
+  /// Use this method to fully customize how links are rendered. The closure receives
+  /// a ``LinkConfiguration`` with the link's `destination` URL and `title` text.
   ///
   /// ```swift
   /// let myTheme = Theme()
-  ///   .customLink { destination in
-  ///     if let url = destination, url.hasPrefix("external:") {
-  ///       UnderlineStyle(.single)
-  ///       ForegroundColor(.blue)
-  ///     } else {
-  ///       UnderlineStyle(.dot)
-  ///       ForegroundColor(.purple)
-  ///     }
+  ///   .customLink { configuration in
+  ///     var attributedString = AttributedString(configuration.title)
+  ///     attributedString.link = configuration.destination
+  ///     attributedString.foregroundColor = .purple
+  ///     return Text(attributedString)
   ///   }
   /// ```
   ///
-  /// - Parameter customLink: A text style builder that receives the link destination and returns the link style.
-  public func customLink(@TextStyleBuilder customLink: @escaping (_ destination: String) -> TextStyle) -> Theme {
+  /// You can conditionally style based on destination:
+  ///
+  /// ```swift
+  /// .customLink { configuration in
+  ///   var text = AttributedString(configuration.title)
+  ///   text.link = configuration.destination
+  ///   if configuration.destination.host == "github.com" {
+  ///     text.foregroundColor = .purple
+  ///   }
+  ///   return Text(text)
+  /// }
+  /// ```
+  ///
+  /// - Parameter customLink: A closure that receives the link configuration and returns the rendered `Text`.
+  public func customLink(_ customLink: @escaping (_ configuration: LinkConfiguration) -> Text) -> Theme {
     var theme = self
     theme.customLink = customLink
     return theme

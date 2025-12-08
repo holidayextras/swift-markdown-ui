@@ -18,13 +18,13 @@ extension View {
     self.environment((\EnvironmentValues.theme).appending(path: keyPath), textStyle())
   }
 
-  /// Adds a destination-based link style to the current ``Theme``.
+  /// Adds a custom link renderer to the current ``Theme``.
   ///
-  /// This style is applied after the base `\.link` style, allowing destination-specific customization.
+  /// Use this to fully customize how links are rendered, including gradient text effects.
   ///
-  /// - Parameter customLink: A text style builder that receives the link destination and returns the link style.
+  /// - Parameter customLink: A closure that receives the link configuration and returns the rendered `Text`.
   public func markdownCustomLink(
-    @TextStyleBuilder customLink: @escaping (_ destination: String) -> TextStyle
+    _ customLink: @escaping (_ configuration: LinkConfiguration) -> Text
   ) -> some View {
     self.environment(\.theme.customLink, customLink)
   }
