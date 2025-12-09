@@ -113,4 +113,28 @@ public struct MarkdownContent: Equatable, MarkdownContentProtocol {
   public func renderHTML() -> String {
     self.blocks.renderHTML()
   }
+
+  /// Returns `true` if this content is a single link.
+  ///
+  /// For example, a heading like `## [Link Text](url)` would return `true`.
+  public var isLink: Bool {
+    guard blocks.count == 1 else { return false }
+
+    let inlineContent: [InlineNode]
+    switch blocks[0] {
+    case .heading(_, let content):
+      inlineContent = content
+    case .paragraph(let content):
+      inlineContent = content
+    default:
+      return false
+    }
+
+    // Check if it's a single link (possibly with just text children inside)
+    guard inlineContent.count == 1,
+          case .link = inlineContent[0] else {
+      return false
+    }
+    return true
+  }
 }

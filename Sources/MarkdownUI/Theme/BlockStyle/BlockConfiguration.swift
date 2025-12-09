@@ -25,4 +25,12 @@ public struct BlockConfiguration {
   /// to get the Markdown formatted text or ``MarkdownContent/renderPlainText()``
   /// to get the plain text of the block content.
   public let content: MarkdownContent
+
+  /// Returns `true` if the block content is a single link.
+  ///
+  /// This is useful for headings like `## [Link Text](url)` where you may want to
+  /// apply different styling (e.g., let the link style take precedence over heading style).
+  public var isLink: Bool {
+    content.isLink
+  }
 }
