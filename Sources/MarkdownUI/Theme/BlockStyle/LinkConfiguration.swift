@@ -14,10 +14,23 @@ import SwiftUI
 ///       .underline()
 ///   }
 /// ```
+///
+/// If the link is inside a heading, you can access the heading level:
+///
+/// ```swift
+/// .customLink { configuration in
+///   if case .level1 = configuration.headingLevel {
+///     // This link is inside a level 1 heading - style accordingly
+///   }
+/// }
+/// ```
 public struct LinkConfiguration {
   /// The link's destination URL.
   public let destination: URL
 
   /// The plain text content of the link.
   public let title: String
+
+  /// The heading level if this link is inside a heading, or `nil` otherwise.
+  public let headingLevel: Heading.Level?
 }

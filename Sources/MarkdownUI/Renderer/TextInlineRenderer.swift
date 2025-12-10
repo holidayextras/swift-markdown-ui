@@ -6,6 +6,7 @@ extension Sequence where Element == InlineNode {
     textStyles: InlineTextStyles,
     images: [String: Image],
     softBreakMode: SoftBreak.Mode,
+    headingLevel: Heading.Level?,
     attributes: AttributeContainer
   ) -> Text {
     var renderer = TextInlineRenderer(
@@ -13,6 +14,7 @@ extension Sequence where Element == InlineNode {
       textStyles: textStyles,
       images: images,
       softBreakMode: softBreakMode,
+      headingLevel: headingLevel,
       attributes: attributes
     )
     renderer.render(self)
@@ -27,6 +29,7 @@ private struct TextInlineRenderer {
   private let textStyles: InlineTextStyles
   private let images: [String: Image]
   private let softBreakMode: SoftBreak.Mode
+  private let headingLevel: Heading.Level?
   private let attributes: AttributeContainer
   private var shouldSkipNextWhitespace = false
 
@@ -35,12 +38,14 @@ private struct TextInlineRenderer {
     textStyles: InlineTextStyles,
     images: [String: Image],
     softBreakMode: SoftBreak.Mode,
+    headingLevel: Heading.Level?,
     attributes: AttributeContainer
   ) {
     self.baseURL = baseURL
     self.textStyles = textStyles
     self.images = images
     self.softBreakMode = softBreakMode
+    self.headingLevel = headingLevel
     self.attributes = attributes
   }
 
@@ -118,7 +123,8 @@ private struct TextInlineRenderer {
 
     let configuration = LinkConfiguration(
       destination: url,
-      title: children.renderPlainText()
+      title: children.renderPlainText(),
+      headingLevel: self.headingLevel
     )
 
     self.result = self.result + customLink(configuration)
