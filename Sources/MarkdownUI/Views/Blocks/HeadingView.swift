@@ -16,7 +16,7 @@ struct HeadingView: View {
       configuration: .init(
         label: .init(
           InlineText(self.content)
-            .environment(\.headingLevel, self.level)
+            .environment(\.headingLevel, Heading.Level(rawValue: self.level))
         ),
         content: .init(block: .heading(level: self.level, content: self.content))
       )

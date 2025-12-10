@@ -6,7 +6,7 @@ extension Sequence where Element == InlineNode {
     textStyles: InlineTextStyles,
     images: [String: Image],
     softBreakMode: SoftBreak.Mode,
-    headingLevel: Int?,
+    headingLevel: Heading.Level?,
     attributes: AttributeContainer
   ) -> Text {
     var renderer = TextInlineRenderer(
@@ -29,7 +29,7 @@ private struct TextInlineRenderer {
   private let textStyles: InlineTextStyles
   private let images: [String: Image]
   private let softBreakMode: SoftBreak.Mode
-  private let headingLevel: Int?
+  private let headingLevel: Heading.Level?
   private let attributes: AttributeContainer
   private var shouldSkipNextWhitespace = false
 
@@ -38,7 +38,7 @@ private struct TextInlineRenderer {
     textStyles: InlineTextStyles,
     images: [String: Image],
     softBreakMode: SoftBreak.Mode,
-    headingLevel: Int?,
+    headingLevel: Heading.Level?,
     attributes: AttributeContainer
   ) {
     self.baseURL = baseURL

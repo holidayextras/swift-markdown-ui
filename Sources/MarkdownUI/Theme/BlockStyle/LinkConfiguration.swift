@@ -19,8 +19,8 @@ import SwiftUI
 ///
 /// ```swift
 /// .customLink { configuration in
-///   if let level = configuration.headingLevel {
-///     // This link is inside a heading - style accordingly
+///   if case .level1 = configuration.headingLevel {
+///     // This link is inside a level 1 heading - style accordingly
 ///   }
 /// }
 /// ```
@@ -31,6 +31,6 @@ public struct LinkConfiguration {
   /// The plain text content of the link.
   public let title: String
 
-  /// The heading level (1-6) if this link is inside a heading, or `nil` otherwise.
-  public let headingLevel: Int?
+  /// The heading level if this link is inside a heading, or `nil` otherwise.
+  public let headingLevel: Heading.Level?
 }

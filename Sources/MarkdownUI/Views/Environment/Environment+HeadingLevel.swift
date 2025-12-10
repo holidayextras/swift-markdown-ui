@@ -1,14 +1,14 @@
 import SwiftUI
 
 extension EnvironmentValues {
-  /// The current heading level (1-6) if rendering inside a heading, or `nil` otherwise.
-  var headingLevel: Int? {
+  /// The current heading level if rendering inside a heading, or `nil` otherwise.
+  var headingLevel: Heading.Level? {
     get { self[HeadingLevelKey.self] }
     set { self[HeadingLevelKey.self] = newValue }
   }
 }
 
 private struct HeadingLevelKey: EnvironmentKey {
-  static var defaultValue: Int? = nil
+  static var defaultValue: Heading.Level? = nil
 }
 
