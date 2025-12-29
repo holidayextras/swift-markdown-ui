@@ -70,6 +70,13 @@ struct ContentView: View {
           } label: {
             Label("Image Providers", systemImage: "powerplug")
           }
+          NavigationLink {
+            LinksView()
+              .navigationTitle("Links")
+              .navigationBarTitleDisplayMode(.inline)
+          } label: {
+            Label("Links", systemImage: "link")
+          }
         }
         Section("Other") {
           NavigationLink {
