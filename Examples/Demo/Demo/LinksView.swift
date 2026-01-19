@@ -17,10 +17,14 @@ struct LinksView: View {
   
   private let imageLinksContent = """
     ## Image Links
-    
-    Click the image below to see its alt text as the title:
-    
-    [![A cute puppy](https://picsum.photos/200/150)](https://example.com/dogs)
+
+    Click each image to see its alt text as the title:
+
+    [![First Image - Mountain](https://picsum.photos/200/150?1)](https://example.com/mountain)
+
+    [![Second Image - Ocean](https://picsum.photos/200/150?2)](https://example.com/ocean)
+
+    [![Third Image - Forest](https://picsum.photos/200/150?3)](https://example.com/forest)
     """
   
   private let mixedContent = """
@@ -46,9 +50,11 @@ struct LinksView: View {
       Section("Image Links (Direct Support)") {
         Markdown(imageLinksContent)
       }
-      .environment(\.openMarkdownLink) { configuration in
+      .environment(\.openMarkdownLink) { [self] configuration in
+        print("Handler called: \(configuration.title)")
         clickHistory.insert((configuration.title, configuration.url, configuration.isImage), at: 0)
         lastClickedLink = configuration
+        print("clickHistory count: \(clickHistory.count)")
         return .handled
       }
       
