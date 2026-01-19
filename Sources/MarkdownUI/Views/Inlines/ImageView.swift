@@ -22,7 +22,7 @@ struct ImageView: View {
 
   private var label: some View {
     self.imageProvider.makeImage(url: self.url)
-      .link(destination: self.data.destination)
+      .link(destination: self.data.destination, title: self.data.alt)
       .accessibilityLabel(self.data.alt)
   }
 
@@ -58,16 +58,18 @@ extension ImageView {
 }
 
 extension View {
-  fileprivate func link(destination: String?) -> some View {
-    self.modifier(LinkModifier(destination: destination))
+  fileprivate func link(destination: String?, title: String) -> some View {
+    self.modifier(LinkModifier(destination: destination, title: title))
   }
 }
 
 private struct LinkModifier: ViewModifier {
   @Environment(\.baseURL) private var baseURL
   @Environment(\.openURL) private var openURL
+  @Environment(\.openMarkdownLink) private var openMarkdownLink
 
   let destination: String?
+  let title: String
 
   var url: URL? {
     self.destination.flatMap {
@@ -78,13 +80,29 @@ private struct LinkModifier: ViewModifier {
   func body(content: Content) -> some View {
     if let url {
       Button {
-        self.openURL(url)
+        self.handleLinkTap(url: url)
       } label: {
         content
       }
       .buttonStyle(.plain)
     } else {
       content
+    }
+  }
+  
+  private func handleLinkTap(url: URL) {
+    if let openMarkdownLink {
+      let configuration = MarkdownLinkClickConfiguration(url: url, title: title, isImage: true)
+      let result = openMarkdownLink(configuration)
+
+      switch result {
+      case .handled, .discarded:
+        return
+      case .systemAction:
+        openURL(url)
+      }
+    } else {
+      openURL(url)
     }
   }
 }
