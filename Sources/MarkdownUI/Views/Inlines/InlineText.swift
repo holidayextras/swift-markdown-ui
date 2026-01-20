@@ -7,6 +7,8 @@ struct InlineText: View {
   @Environment(\.softBreakMode) private var softBreakMode
   @Environment(\.headingLevel) private var headingLevel
   @Environment(\.theme) private var theme
+  @Environment(\.openMarkdownLink) private var openMarkdownLink
+  @Environment(\.openURL) private var openURL
 
   @State private var inlineImages: [String: Image] = [:]
 
@@ -34,8 +36,33 @@ struct InlineText: View {
         attributes: attributes
       )
     }
+    .environment(\.openURL, OpenURLAction { url in
+      self.handleLinkTap(url: url)
+    })
     .task(id: self.inlines) {
       self.inlineImages = (try? await self.loadInlineImages()) ?? [:]
+    }
+  }
+
+  private func handleLinkTap(url: URL) -> OpenURLAction.Result {
+    // Extract the encoded title from the URL
+    let title = url.markdownLinkTitle ?? ""
+    let cleanURL = url.strippingMarkdownLinkTitle
+
+    if let openMarkdownLink {
+      let configuration = MarkdownLinkClickConfiguration(url: cleanURL, title: title, isImage: false)
+      let result = openMarkdownLink(configuration)
+
+      switch result {
+      case .handled, .discarded:
+        return .handled
+      case .systemAction:
+        return .systemAction
+      }
+    } else {
+      // No custom handler, use system action with clean URL
+      openURL(cleanURL)
+      return .handled
     }
   }
 
