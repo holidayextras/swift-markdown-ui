@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 extension InlineNode {
   func renderAttributedString(
@@ -164,7 +165,12 @@ private struct AttributedStringInlineRenderer {
 
     // Apply base link style
     self.attributes = self.textStyles.link.mergingAttributes(self.attributes)
-    self.attributes.link = URL(string: destination, relativeTo: self.baseURL)
+
+    // Encode the link title in the URL so it can be extracted at click time
+    if let url = URL(string: destination, relativeTo: self.baseURL) {
+      let title = children.renderPlainText()
+      self.attributes.link = URL.markdownLink(url, title: title)
+    }
 
     for child in children {
       self.render(child)
