@@ -114,7 +114,7 @@ public struct MarkdownContent: Equatable, MarkdownContentProtocol {
     self.blocks.renderHTML()
   }
 
-  /// Returns `true` if this content contains a single link.
+  /// Returns `true` if this content contains any links.
   ///
   /// For example, a heading like `## Text [Link Text](url) More Text` would return `true`.
   public var containsLink: Bool {
@@ -130,12 +130,10 @@ public struct MarkdownContent: Equatable, MarkdownContentProtocol {
         continue
       }
         
-      if inlineContent.contains(where: {
+      return inlineContent.contains(where: {
         if case .link = $0 { return true }
-          return false
-        }) {
-          return true
-        }
+        return false
+      })
     }
 
     return false
