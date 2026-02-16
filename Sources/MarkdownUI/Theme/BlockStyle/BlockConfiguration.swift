@@ -30,7 +30,7 @@ public struct BlockConfiguration {
   ///
   /// This is useful for headings like `## [Link Text](url)` where you may want to
   /// apply different styling (e.g., let the link style take precedence over heading style).
-  public var isLink: Bool {
-    content.isLink
+  public var containsLink: Bool {
+    content.containsLink
   }
 }
