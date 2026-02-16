@@ -114,30 +114,30 @@ public struct MarkdownContent: Equatable, MarkdownContentProtocol {
     self.blocks.renderHTML()
   }
 
-  /// Returns `true` if this content is a single link.
+  /// Returns `true` if this content contains a single link.
   ///
-  /// For example, a heading like `## [Link Text](url)` would return `true`.
-    public var containsLink: Bool {
-      for block in blocks {
-        let inlineContent: [InlineNode]
+  /// For example, a heading like `## Text [Link Text](url) More Text` would return `true`.
+  public var containsLink: Bool {
+    for block in blocks {
+      let inlineContent: [InlineNode]
 
-        switch block {
-        case .heading(_, let content):
-          inlineContent = content
-        case .paragraph(let content):
-          inlineContent = content
-        default:
-          continue
-        }
-
-        if inlineContent.contains(where: {
-          if case .link = $0 { return true }
+      switch block {
+      case .heading(_, let content):
+        inlineContent = content
+      case .paragraph(let content):
+        inlineContent = content
+      default:
+        continue
+      }
+        
+      if inlineContent.contains(where: {
+        if case .link = $0 { return true }
           return false
         }) {
           return true
         }
-      }
-
-      return false
     }
+
+    return false
+  }
 }
