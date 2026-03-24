@@ -190,7 +190,7 @@ import SwiftUI
 /// ```
 public struct Markdown: View {
   @Environment(\.colorScheme) private var colorScheme
-  @Environment(\.theme.text) private var text
+  @Environment(\.theme) private var theme
 
   private let content: MarkdownContent
   private let baseURL: URL?
@@ -211,14 +211,26 @@ public struct Markdown: View {
 
   public var body: some View {
     TextStyleAttributesReader { attributes in
-      BlockSequence(self.blocks)
+      self.contentView
         .foregroundColor(attributes.foregroundColor)
         .background(attributes.backgroundColor)
         .modifier(ScaledFontSizeModifier(attributes.fontProperties?.size))
     }
-    .textStyle(self.text)
+    .textStyle(self.theme.text)
     .environment(\.baseURL, self.baseURL)
     .environment(\.imageBaseURL, self.imageBaseURL)
+  }
+
+  @ViewBuilder private var contentView: some View {
+    if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *),
+      self.theme.carousel != nil
+    {
+      MarkdownSegmentedView(
+        segments: MarkdownSegmentParser.parse(self.content.renderMarkdown())
+      )
+    } else {
+      BlockSequence(self.blocks)
+    }
   }
 
   private var blocks: [BlockNode] {
