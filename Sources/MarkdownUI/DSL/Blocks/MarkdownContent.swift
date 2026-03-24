@@ -114,6 +114,38 @@ public struct MarkdownContent: Equatable, MarkdownContentProtocol {
     self.blocks.renderHTML()
   }
 
+  /// Returns a ``StandaloneLink`` if this content is a single paragraph containing only a link.
+  ///
+  /// A standalone link is a paragraph whose inline content consists of exactly one `.link` node,
+  /// with no other non-whitespace inline siblings.
+  public var standaloneLink: StandaloneLink? {
+    guard blocks.count == 1, case .paragraph(let content) = blocks[0] else {
+      return nil
+    }
+
+    // Filter out whitespace-only text nodes and soft breaks
+    let significantNodes = content.filter { node in
+      switch node {
+      case .text(let text):
+        return !text.allSatisfy(\.isWhitespace)
+      case .softBreak:
+        return false
+      default:
+        return true
+      }
+    }
+
+    guard significantNodes.count == 1,
+          case .link(let destination, let children) = significantNodes[0],
+          let url = URL(string: destination)
+    else {
+      return nil
+    }
+
+    let title = children.renderPlainText()
+    return StandaloneLink(title: title, url: url)
+  }
+
   /// Returns `true` if this content contains any links.
   ///
   /// For example, a heading like `## Text [Link Text](url) More Text` would return `true`.

@@ -199,6 +199,14 @@ public struct Theme: Sendable {
   /// The thematic break style.
   public var thematicBreak = BlockStyle { Divider() }
 
+  /// The standalone link style, applied to paragraphs after the ``paragraph`` style.
+  ///
+  /// The consumer can inspect ``StandaloneLinkConfiguration/standaloneLink`` to detect
+  /// paragraphs containing only a single link and render them differently.
+  /// The ``StandaloneLinkConfiguration/label`` is the paragraph as rendered by the
+  /// ``paragraph`` style, so the default pass-through preserves all paragraph styling.
+  public var standaloneLink = BlockStyle<StandaloneLinkConfiguration> { $0.label }
+
   /// Creates a theme with default text styles.
   public init() {}
 }
@@ -492,6 +500,23 @@ extension Theme {
   public func thematicBreak<Body: View>(@ViewBuilder body: @escaping () -> Body) -> Theme {
     var theme = self
     theme.thematicBreak = .init(body: body)
+    return theme
+  }
+
+  /// Adds a standalone link style to the theme.
+  ///
+  /// The configuration's ``StandaloneLinkConfiguration/standaloneLink`` property is non-nil
+  /// when the paragraph contains only a single link, allowing the consumer to render it
+  /// differently. The ``StandaloneLinkConfiguration/label`` is the paragraph as already
+  /// rendered by the ``paragraph`` style.
+  ///
+  /// - Parameter body: A view builder that receives a ``StandaloneLinkConfiguration`` and returns
+  ///   the customized paragraph view.
+  public func standaloneLink<Body: View>(
+    @ViewBuilder body: @escaping (_ configuration: StandaloneLinkConfiguration) -> Body
+  ) -> Theme {
+    var theme = self
+    theme.standaloneLink = .init(body: body)
     return theme
   }
 }
