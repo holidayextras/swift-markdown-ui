@@ -136,7 +136,8 @@ public struct MarkdownContent: Equatable, MarkdownContentProtocol {
     }
 
     guard significantNodes.count == 1,
-          case .link(let destination, let children) = significantNodes[0],
+          let firstNode = significantNodes.first,
+          case .link(let destination, let children) = firstNode,
           let url = URL(string: destination)
     else {
       return nil

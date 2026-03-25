@@ -9,14 +9,14 @@ public struct StandaloneLink: Sendable {
   public let url: URL
 }
 
-/// The properties of a paragraph that may contain a standalone link.
+/// The properties of a paragraph containing a standalone link.
 ///
-/// The theme ``Theme/standaloneLinkStyle`` block style receives a `StandaloneLinkConfiguration`
-/// input in its `body` closure. When ``standaloneLink`` is non-nil, the paragraph contains
-/// only a single link with no surrounding text.
+/// The theme ``Theme/standaloneLink`` block style receives a `StandaloneLinkConfiguration`
+/// input in its `body` closure. This configuration is only used when the paragraph
+/// contains exactly one link with no surrounding text.
 public struct StandaloneLinkConfiguration {
-  /// Non-nil when the paragraph contains only a single link.
-  public let standaloneLink: StandaloneLink?
+  /// The standalone link detected in the paragraph.
+  public let standaloneLink: StandaloneLink
 
   /// A type-erased view of the default-rendered paragraph.
   public struct Label: View {

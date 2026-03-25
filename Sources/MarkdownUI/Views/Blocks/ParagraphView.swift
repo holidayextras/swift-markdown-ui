@@ -26,12 +26,16 @@ struct ParagraphView: View {
         content: markdownContent
       )
     )
-    self.standaloneLink.makeBody(
-      configuration: .init(
-        standaloneLink: markdownContent.standaloneLink,
-        label: .init(paragraphLabel)
+    if let link = markdownContent.standaloneLink {
+      self.standaloneLink.makeBody(
+        configuration: .init(
+          standaloneLink: link,
+          label: .init(paragraphLabel)
+        )
       )
-    )
+    } else {
+      paragraphLabel
+    }
   }
 
   @ViewBuilder private var label: some View {

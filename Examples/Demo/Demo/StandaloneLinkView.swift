@@ -33,27 +33,22 @@ struct StandaloneLinkView: View {
         Markdown(markdownContent)
           .markdownTheme(
             Theme()
-              .standaloneLink { content in
-                if let link = content.standaloneLink {
-                  Button {
-                    lastTappedLink = link
-                    openURL(link.url)
-                  } label: {
-                    Text(link.title)
-                      .fontWeight(.semibold)
-                      .frame(maxWidth: .infinity)
-                      .padding(.vertical, 12)
-                      .background(
-                        Capsule()
-                          .fill(.blue.gradient)
-                      )
-                      .foregroundStyle(.white)
-                  }
-                  .buttonStyle(.plain)
-                } else {
-                  content.label
-                    .fixedSize(horizontal: false, vertical: true)
+              .standaloneLink { configuration in
+                Button {
+                  lastTappedLink = configuration.standaloneLink
+                  openURL(configuration.standaloneLink.url)
+                } label: {
+                  Text(configuration.standaloneLink.title)
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                      Capsule()
+                        .fill(.blue.gradient)
+                    )
+                    .foregroundStyle(.white)
                 }
+                .buttonStyle(.plain)
               }
           )
       }
