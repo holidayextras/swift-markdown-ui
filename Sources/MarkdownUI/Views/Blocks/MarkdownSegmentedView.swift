@@ -1,26 +1,28 @@
 import SwiftUI
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 struct MarkdownSegmentedView: View {
   @Environment(\.theme) private var theme
-  @Environment(\.colorScheme) private var colorScheme
 
-  private let segments: [MarkdownSegment]
+  private let blocks: [BlockNode]
 
-  init(segments: [MarkdownSegment]) {
-    self.segments = segments
+  init(_ blocks: [BlockNode]) {
+    self.blocks = blocks
   }
-
+    
+  private var enumeratedGroups: [(offset: Int, element: BlockGroup)] {
+    Array(self.groupedBlocks.enumerated())
+  }
+    
   var body: some View {
     VStack(spacing: 0) {
-      ForEach(self.segments, id: \.self) { segment in
-        switch segment {
-        case .markdown(let markdownString):
-          self.markdownView(for: markdownString)
-        case .imageCarousel(let images):
-          self.carouselView(for: images)
+        ForEach(enumeratedGroups, id: \.offset) { _, group in
+          switch group {
+          case .blocks(let nodes):
+            BlockSequence(nodes)
+          case .carousel(let images):
+            self.carouselView(for: images)
+          }
         }
-      }
     }
   }
 
@@ -31,13 +33,35 @@ struct MarkdownSegmentedView: View {
     {
       carousel.makeBody(configuration: CarouselConfiguration(images: images))
     } else {
-      self.markdownView(for: images.map(\.markdownRepresentation).joined(separator: " "))
+      BlockSequence(images.map(\.blockNode))
     }
   }
 
-  private func markdownView(for markdownString: String) -> some View {
-    let content = MarkdownContent(markdownString)
-    let blocks = content.blocks.filterImagesMatching(colorScheme: self.colorScheme)
-    return BlockSequence(blocks)
+  private enum BlockGroup {
+    case blocks([BlockNode])
+    case carousel([MarkdownImageItem])
+  }
+
+  private var groupedBlocks: [BlockGroup] {
+    var groups: [BlockGroup] = []
+    var currentBlocks: [BlockNode] = []
+
+    for block in self.blocks {
+      if let images = block.carouselImages {
+        if !currentBlocks.isEmpty {
+          groups.append(.blocks(currentBlocks))
+          currentBlocks = []
+        }
+        groups.append(.carousel(images))
+      } else {
+        currentBlocks.append(block)
+      }
+    }
+
+    if !currentBlocks.isEmpty {
+      groups.append(.blocks(currentBlocks))
+    }
+
+    return groups
   }
 }

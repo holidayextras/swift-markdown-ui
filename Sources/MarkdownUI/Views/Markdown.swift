@@ -222,12 +222,8 @@ public struct Markdown: View {
   }
 
   @ViewBuilder private var contentView: some View {
-    if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *),
-      self.theme.carousel != nil
-    {
-      MarkdownSegmentedView(
-        segments: MarkdownSegmentParser.parse(self.content.renderMarkdown())
-      )
+    if self.theme.carousel != nil {
+      MarkdownSegmentedView(self.blocks)
     } else {
       BlockSequence(self.blocks)
     }

@@ -508,8 +508,8 @@ extension Theme {
 
   /// Adds a carousel style to the theme for rendering image-only paragraphs.
   ///
-  /// When a carousel style is set, the Markdown view uses ``MarkdownSegmentParser``
-  /// to detect image-only paragraphs and renders them using the provided closure.
+  /// When a carousel style is set, the Markdown view detects image-only paragraphs
+  /// using the parsed block tree and renders them using the provided closure.
   /// The closure receives a ``CarouselConfiguration`` containing the extracted images.
   ///
   /// ```swift

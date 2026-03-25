@@ -20,12 +20,12 @@ public struct MarkdownImageItem: Hashable, Sendable {
     self.destination = destination
   }
 
-  /// Reconstructs the Markdown representation of this image.
-  var markdownRepresentation: String {
+  var blockNode: BlockNode {
+    let imageNode = InlineNode.image(source: source, children: [.text(alt)])
     if let destination {
-      return "[![\(alt)](\(source))](\(destination))"
+      return .paragraph(content: [.link(destination: destination, children: [imageNode])])
     } else {
-      return "![\(alt)](\(source))"
+      return .paragraph(content: [imageNode])
     }
   }
 }
