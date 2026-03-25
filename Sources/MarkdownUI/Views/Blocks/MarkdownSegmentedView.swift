@@ -17,16 +17,21 @@ struct MarkdownSegmentedView: View {
         switch segment {
         case .markdown(let markdownString):
           self.markdownView(for: markdownString)
-        case .imageCarousel(let images) where images.count >= self.theme.carouselThreshold:
-          self.theme.carousel?.makeBody(
-            configuration: CarouselConfiguration(images: images)
-          )
         case .imageCarousel(let images):
-          self.markdownView(
-            for: images.map(\.markdownRepresentation).joined(separator: " ")
-          )
+          self.carouselView(for: images)
         }
       }
+    }
+  }
+
+  @ViewBuilder
+  private func carouselView(for images: [MarkdownImageItem]) -> some View {
+    if images.count >= self.theme.carouselThreshold,
+      let carousel = self.theme.carousel
+    {
+      carousel.makeBody(configuration: CarouselConfiguration(images: images))
+    } else {
+      self.markdownView(for: images.map(\.markdownRepresentation).joined(separator: " "))
     }
   }
 
