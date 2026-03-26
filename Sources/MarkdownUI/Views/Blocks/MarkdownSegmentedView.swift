@@ -38,6 +38,7 @@ struct MarkdownSegmentedView: View {
       HStack {
         ForEach(images.indices, id: \.self) { index in
           ImageView(data: images[index].rawImageData)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         Spacer()
       }
