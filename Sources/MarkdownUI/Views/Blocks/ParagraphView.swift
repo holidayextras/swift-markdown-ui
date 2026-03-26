@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ParagraphView: View {
   @Environment(\.theme.paragraph) private var paragraph
+  @Environment(\.theme.standaloneLink) private var standaloneLink
 
   private let content: [InlineNode]
 
@@ -18,12 +19,23 @@ struct ParagraphView: View {
   }
 
   var body: some View {
-    self.paragraph.makeBody(
+    let markdownContent = MarkdownContent(block: .paragraph(content: self.content))
+    let paragraphLabel = self.paragraph.makeBody(
       configuration: .init(
         label: .init(self.label),
-        content: .init(block: .paragraph(content: self.content))
+        content: markdownContent
       )
     )
+    if let link = markdownContent.standaloneLink {
+      self.standaloneLink.makeBody(
+        configuration: .init(
+          standaloneLink: link,
+          label: .init(paragraphLabel)
+        )
+      )
+    } else {
+      paragraphLabel
+    }
   }
 
   @ViewBuilder private var label: some View {

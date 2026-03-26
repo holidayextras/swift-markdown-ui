@@ -84,6 +84,13 @@ struct ContentView: View {
           } label: {
             Label("Links", systemImage: "link")
           }
+          NavigationLink {
+            StandaloneLinkView()
+              .navigationTitle("Standalone Links")
+              .navigationBarTitleDisplayMode(.inline)
+          } label: {
+            Label("Standalone Links", systemImage: "link.badge.plus")
+          }
         }
         Section("Other") {
           NavigationLink {
