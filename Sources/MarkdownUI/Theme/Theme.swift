@@ -199,6 +199,7 @@ public struct Theme: Sendable {
   /// The thematic break style.
   public var thematicBreak = BlockStyle { Divider() }
 
+
   /// The standalone link style, applied to paragraphs after the ``paragraph`` style.
   ///
   /// The consumer can inspect ``StandaloneLinkConfiguration/standaloneLink`` to detect
@@ -206,6 +207,18 @@ public struct Theme: Sendable {
   /// The ``StandaloneLinkConfiguration/label`` is the paragraph as rendered by the
   /// ``paragraph`` style, so the default pass-through preserves all paragraph styling.
   public var standaloneLink = BlockStyle<StandaloneLinkConfiguration> { $0.label }
+
+  /// The optional carousel style for image-only paragraphs.
+  ///
+  /// When set, image-only paragraphs are detected and rendered using this block style
+  /// instead of the default paragraph rendering. When `nil` (the default), no carousel
+  /// detection occurs and image-only paragraphs render normally.
+  public var carousel: BlockStyle<CarouselConfiguration>?
+
+  /// The minimum number of images required for an image-only paragraph to be rendered
+  /// as a carousel. Defaults to `1` (any image-only paragraph triggers the carousel).
+  public var carouselThreshold: Int = 1
+
 
   /// Creates a theme with default text styles.
   public init() {}
@@ -517,6 +530,40 @@ extension Theme {
   ) -> Theme {
     var theme = self
     theme.standaloneLink = .init(body: body)
+    return theme
+  }
+
+  /// Adds a carousel style to the theme for rendering image-only paragraphs.
+  ///
+  /// When a carousel style is set, the Markdown view detects image-only paragraphs
+  /// using the parsed block tree and renders them using the provided closure.
+  /// The closure receives a ``CarouselConfiguration`` containing the extracted images.
+  ///
+  /// ```swift
+  /// let myTheme = Theme()
+  ///   .carousel(threshold: 2) { configuration in
+  ///     ScrollView(.horizontal) {
+  ///       HStack {
+  ///         ForEach(configuration.images, id: \.self) { image in
+  ///           AsyncImage(url: URL(string: image.source))
+  ///         }
+  ///       }
+  ///     }
+  ///   }
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - threshold: The minimum number of images in a paragraph to trigger carousel rendering.
+  ///     Defaults to `1` (any image-only paragraph). Set to `2` or higher to only apply the
+  ///     carousel to paragraphs with multiple images.
+  ///   - body: A view builder that returns a customized carousel view.
+  public func carousel<Body: View>(
+    threshold: Int = 1,
+    @ViewBuilder body: @escaping (_ configuration: CarouselConfiguration) -> Body
+  ) -> Theme {
+    var theme = self
+    theme.carousel = .init(body: body)
+    theme.carouselThreshold = max(1, threshold)
     return theme
   }
 }
