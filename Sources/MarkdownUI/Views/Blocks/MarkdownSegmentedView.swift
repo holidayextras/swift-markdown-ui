@@ -14,13 +14,15 @@ struct MarkdownSegmentedView: View {
   }
     
   var body: some View {
-    VStack(spacing: 0) {
+    VStack(alignment: .leading, spacing: 0) {
         ForEach(enumeratedGroups, id: \.offset) { _, group in
           switch group {
           case .blocks(let nodes):
             BlockSequence(nodes)
           case .carousel(let images):
             self.carouselView(for: images)
+                  .padding(.top, 16)
+                  .padding(.bottom, 24)
           }
         }
     }
