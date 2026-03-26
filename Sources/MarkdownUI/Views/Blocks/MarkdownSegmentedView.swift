@@ -33,8 +33,13 @@ struct MarkdownSegmentedView: View {
     {
       carousel.makeBody(configuration: CarouselConfiguration(images: images))
     } else {
-      BlockSequence(images.map(\.blockNode))
-    }
+      HStack {
+        ForEach(images.indices, id: \.self) { index in
+          ImageView(data: images[index].rawImageData)
+        }
+        Spacer()
+      }
+    } 
   }
 
   private enum BlockGroup {

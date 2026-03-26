@@ -20,6 +20,10 @@ public struct MarkdownImageItem: Hashable, Sendable {
     self.destination = destination
   }
 
+  var rawImageData: RawImageData {
+    RawImageData(source: source, alt: alt, destination: destination)
+  }
+
   var blockNode: BlockNode {
     let imageNode = InlineNode.image(source: source, children: [.text(alt)])
     if let destination {
