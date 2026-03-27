@@ -21,8 +21,8 @@ struct MarkdownSegmentedView: View {
             BlockSequence(nodes)
           case .carousel(let images):
             self.carouselView(for: images)
-                  .padding(.top, 16)
-                  .padding(.bottom, 24)
+//                  .padding(.top, 16)
+//                  .padding(.bottom, 24)
           }
         }
     }
@@ -38,7 +38,7 @@ struct MarkdownSegmentedView: View {
       HStack {
         ForEach(images.indices, id: \.self) { index in
           ImageView(data: images[index].rawImageData)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+//                .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         Spacer()
       }
