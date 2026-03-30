@@ -14,7 +14,7 @@ struct MarkdownSegmentedView: View {
   }
     
   var body: some View {
-    VStack(spacing: 0) {
+    VStack(alignment: .leading, spacing: 0) {
         ForEach(enumeratedGroups, id: \.offset) { _, group in
           switch group {
           case .blocks(let nodes):
@@ -33,8 +33,13 @@ struct MarkdownSegmentedView: View {
     {
       carousel.makeBody(configuration: CarouselConfiguration(images: images))
     } else {
-      BlockSequence(images.map(\.blockNode))
-    }
+      HStack {
+        ForEach(images.indices, id: \.self) { index in
+          ImageView(data: images[index].rawImageData)
+        }
+        Spacer()
+      }
+    } 
   }
 
   private enum BlockGroup {
